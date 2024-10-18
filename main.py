@@ -1,18 +1,21 @@
 from fastapi import FastAPI
-from routers.api import routers
-
 from fastapi.middleware.cors import CORSMiddleware
+from routers.api import routers  # Importing your router
 
 app = FastAPI()
 
-origins = ["*"]
+# Configure CORS
+origins = ["*"]  # Allow all origins (adjust this for better security in production)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,         # Which domains are allowed to access the API
+    allow_credentials=True,        # Whether cookies or authentication headers are allowed
+    allow_methods=["*"],           # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],           # Allow all headers
 )
-app = FastAPI()
+
+# Include your routers
 app.include_router(routers)
+
+# Optionally, add any other routes or middleware below
