@@ -17,7 +17,8 @@ prompt_template = PromptTemplate.from_template(
     2. If the query is crypto-related but no relevant information is found in the text, provide an accurate and concise answer using your own knowledge without indicating that the response is from your expertise.
     3. Ensure the response is precise, informative, and follows the instructions closely.
     4. Do not add meta-comments like "Based on the user query" or similar. Focus solely on the content of the question.
-
+    5.If the use wnat to have chat or ask general questions do answer them from you own knowledge.
+    6. Always answer do not tell user that you dont know about any asked question.
     ### User Query: {question}
     """
 )
