@@ -1,189 +1,18 @@
-# # from fastapi import APIRouter, HTTPException, status
-# # from services.chatbot_services import Application
-# # from schema.chatbot_schema import ChatbotRequest
-
-# # router = APIRouter(
-# #     prefix="/chatbot",
-# #     tags=["chatbot"],
-# # )
-
-
-# # @router.post("/generate_response", status_code=status.HTTP_200_OK)
-# # async def generate_response(request: ChatbotRequest):
-# #     try:
-# #         # Validate URLs and query inputs before processing
-# #         if not request.urls or not request.query:
-# #             raise HTTPException(
-# #                 status_code=status.HTTP_400_BAD_REQUEST,
-# #                 detail="Invalid input: URLs and query are required."
-# #             )
-
-# #         # Initialize the Application class with the given list of URLs
-# #         app = Application(request.urls)
-
-# #         # Generate the response using the query
-# #         response = app.process_and_respond(request.query)
-
-# #         # If response is empty or invalid, return an appropriate status
-# #         if not response:
-# #             raise HTTPException(
-# #                 status_code=status.HTTP_204_NO_CONTENT,
-# #                 detail="No response generated from the LLM."
-# #             )
-
-# #         # Return the response with a 200 status code
-# #         return {"response": response}
-
-# #     except HTTPException as e:
-# #         # Let HTTPExceptions pass through to be handled by FastAPI
-# #         raise e
-
-# #     except Exception as e:
-# #         # Catch any unexpected errors and return a 500 status code
-# #         raise HTTPException(
-# #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-# #             detail=f"Internal server error: {str(e)}"
-# #         )
-
-
-# from fastapi import APIRouter, HTTPException, status
-# from schema.balace_chatbot_schema import ChatRequest, ChatResponse
-# from schema.chatbot_schema import ChatbotRequest
-# from services.prompts import prompt
-# from services.api_chatbot import llm_with_tools, tools
-# from services.chatbot_services import Application
-# from langchain.agents import AgentExecutor, create_tool_calling_agent
-# from langchain.memory import ConversationBufferMemory
-
-# # Initialize memory and agents for the agent-based chatbot
-# memory = ConversationBufferMemory(memory_key='chat_history')
-# agents = create_tool_calling_agent(llm_with_tools, tools, prompt=prompt)
-# agent_executor = AgentExecutor(agent=agents, tools=tools, verbose=True)
-
-# # Create a single router for both chatbots
-# router = APIRouter(
-#     prefix="/chatbot",
-#     tags=["Chatbot"],
-# )
-
-# # Route for agent-based chatbot
-
-
-# @router.post("/agent", response_model=ChatResponse)
-# async def agent_chat(request: ChatRequest):
-#     try:
-#         # Use agent_executor to get a response, using "input" as the key
-#         ai_message = agent_executor.invoke(
-#             {"input": request.message}
-#         )
-
-#         # Check if the response is in the correct format
-#         if isinstance(ai_message, dict) and 'output' in ai_message:
-#             response_str = ai_message['output']
-#         elif isinstance(ai_message, str):
-#             response_str = ai_message
-#         else:
-#             raise ValueError("Unexpected response format from agent_executor")
-
-#         # Update memory with user and AI messages
-#         memory.chat_memory.add_user_message(request.message)
-#         memory.chat_memory.add_ai_message(response_str)
-#         print(memory.load_memory_variables({}))
-
-#         # Return the response
-#         return ChatResponse(response=response_str)
-
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             detail=f"An error occurred: {str(e)}"
-#         )
-
-# # Route for URL-based chatbot
-
-
-# @router.post("/generate_response", status_code=status.HTTP_200_OK)
-# async def generate_response(request: ChatbotRequest):
-#     try:
-#         # Validate URLs and query inputs before processing
-#         if not request.urls or not request.query:
-#             raise HTTPException(
-#                 status_code=status.HTTP_400_BAD_REQUEST,
-#                 detail="Invalid input: URLs and query are required."
-#             )
-
-#         # Initialize the Application class with the given list of URLs
-#         app = Application(request.urls)
-
-#         # Generate the response using the query
-#         response = app.process_and_respond(request.query)
-
-#         # If response is empty or invalid, return an appropriate status
-#         if not response:
-#             raise HTTPException(
-#                 status_code=status.HTTP_204_NO_CONTENT,
-#                 detail="No response generated from the LLM."
-#             )
-
-#         # Return the response
-#         return {"response": response}
-
-#     except HTTPException as e:
-#         raise e
-
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             detail=f"Internal server error: {str(e)}"
-#         )
-
 """
 from fastapi import APIRouter, HTTPException, status
-from schema.balace_chatbot_schema import ChatRequest, ChatResponse
-from schema.chatbot_schema import ChatbotRequest
-from services.prompts import prompt
-from services.api_chatbot import llm_with_tools, tools
 from services.chatbot_services import Application
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.memory import ConversationBufferMemory
+from schema.chatbot_schema import ChatbotRequest
 
-# Initialize memory and agents for the agent-based chatbot
-memory = ConversationBufferMemory(memory_key='chat_history')
-agents = create_tool_calling_agent(llm_with_tools, tools, prompt=prompt)
-agent_executor = AgentExecutor(agent=agents, tools=tools, verbose=True)
-
-# Create a single router for both chatbots
 router = APIRouter(
     prefix="/chatbot",
-    tags=["Chatbot"],
+    tags=["chatbot"],
 )
 
 
-@router.post("/", response_model=ChatResponse)
-async def chat(request: ChatRequest | ChatbotRequest):
+@router.post("/generate_response", status_code=status.HTTP_200_OK)
+async def generate_response(request: ChatbotRequest):
     try:
-        # Check if the request is for the agent-based chatbot
-        if hasattr(request, 'message'):
-            # Handle agent-based chatbot request
-            ai_message = agent_executor.invoke({"input": request.message})
-
-            # Check if the response is in the correct format
-            if isinstance(ai_message, dict) and 'output' in ai_message:
-                response_str = ai_message['output']
-            elif isinstance(ai_message, str):
-                response_str = ai_message
-            else:
-                raise ValueError(
-                    "Unexpected response format from agent_executor")
-
-            # Update memory with user and AI messages
-            memory.chat_memory.add_user_message(request.message)
-            memory.chat_memory.add_ai_message(response_str)
-            print(memory.load_memory_variables({}))
-
-            return ChatResponse(response=response_str)
-
-        # Otherwise, handle URL-based chatbot request
+        # Validate URLs and query inputs before processing
         if not request.urls or not request.query:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -203,32 +32,29 @@ async def chat(request: ChatRequest | ChatbotRequest):
                 detail="No response generated from the LLM."
             )
 
-        # Return the response
-        return ChatResponse(response=response)
+        # Return the response with a 200 status code
+        return {"response": response}
 
     except HTTPException as e:
+        # Let HTTPExceptions pass through to be handled by FastAPI
         raise e
 
     except Exception as e:
+        # Catch any unexpected errors and return a 500 status code
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}"
         )
-
 """
 
 
+
 from fastapi import APIRouter, HTTPException, status
-# from schema.balace_chatbot_schema import ChatRequest, ChatResponse
 from schema.chatbot_schema import ChatbotRequest,ChatbotResponse
 from services.prompts import prompt
 from services.api_chatbot import llm_with_tools, tools
 from services.chatbot_services import Application  # Your web-scraping logic here
 from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.memory import ConversationBufferMemory
-
-# Initialize memory and agents for the agent-based chatbot
-memory = ConversationBufferMemory(memory_key='chat_history')
 agents = create_tool_calling_agent(llm_with_tools, tools, prompt=prompt)
 agent_executor = AgentExecutor(agent=agents, tools=tools, verbose=True)
 
@@ -243,7 +69,7 @@ router = APIRouter(
 async def chat(request: ChatbotRequest):
     try:
         # Determine the type of request based on the query
-        if hasattr(request, 'query'):
+        if hasattr(request, 'message'):
             if request.query == "Web-Scraping":
                 # Handle web-scraping request
                 if not request.urls:
@@ -256,7 +82,7 @@ async def chat(request: ChatbotRequest):
                 app = Application(request.urls)
 
                 # Generate the response using the query
-                response = app.process_and_respond(request.query)
+                response = app.process_and_respond(request.message)
 
                 # If response is empty or invalid, return an appropriate status
                 if not response:
@@ -279,11 +105,6 @@ async def chat(request: ChatbotRequest):
                 else:
                     raise ValueError(
                         "Unexpected response format from agent_executor")
-
-                # Update memory with user and AI messages
-                memory.chat_memory.add_user_message(request.message)
-                memory.chat_memory.add_ai_message(response_str)
-                print(memory.load_memory_variables({}))
 
                 return ChatbotResponse(response=response_str)
 
