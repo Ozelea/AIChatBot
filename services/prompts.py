@@ -15,9 +15,8 @@ prompt_template = PromptTemplate.from_template(
     Instructions:
     1. If the user query is related to Cryptocurrency, Blockchain, Decentralization, Consensus Mechanism, Bitcoin, Altcoin, Stablecoin, Tokens, Smart Contracts, DApps, Layer 1, Layer 2, Proof of Work, Proof of Stake, Delegated Proof of Stake, Proof of Authority, Mining, Staking, Validator, Hash Rate, Exchange, DEX, Liquidity, Market Cap, Order Types, DeFi, Yield Farming, Liquidity Pool, Staking Pools, AMM, Private Key, Public Key, Wallet, Cold Wallet, Hot Wallet, Multi-Sig Wallet, KYC, AML, Regulatory Bodies, Fork, ICO, IDO, NFT, DAO, Interoperability, Oracles, Web3, Metaverse, Cross-Chain Compatibility, Layer 0, Scalability Solutions, Volatility, HODL, Whale, Pump and Dump., directly provide the most relevant and concise information from the text.
     2. If the query is crypto-related but no relevant information is found in the text, provide an accurate and concise answer using your own knowledge without indicating that the response is from your expertise.
-    3. If the user query is not related to crypto, respond with: "The provided content is not about the topic you queried. Please provide a query related to crypto or cryptocurrency."
-    4. Ensure the response is precise, informative, and follows the instructions closely.
-    5. Do not add meta-comments like "Based on the user query" or similar. Focus solely on the content of the question.
+    3. Ensure the response is precise, informative, and follows the instructions closely.
+    4. Do not add meta-comments like "Based on the user query" or similar. Focus solely on the content of the question.
 
     ### User Query: {question}
     """
