@@ -19,6 +19,7 @@ prompt_template = PromptTemplate.from_template(
     4. Do not add meta-comments like "Based on the user query" or similar. Focus solely on the content of the question.
     5.If the use wnat to have chat or ask general questions do answer them from you own knowledge.
     6. Always answer do not tell user that you dont know about any asked question.
+    7. Never indicate that the relevent information is not available in the provided text. Just answer the question if you can either from provided text or from you own knowledge.
     ### User Query: {question}
     """
 )
